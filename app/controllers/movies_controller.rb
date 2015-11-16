@@ -12,10 +12,13 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.uniq.pluck(:rating) 
-    flash.keep and redirect_to movies_path(ratings: session[:ratings], order: session[:sort_by], submit: 'Refresh') and return if params[:ratings].nil? and params[:sort_by].nil?
-    session[:ratings] = params[:ratings] if !params[:ratings].nil?
+    if params[:sort_by] and params[:ratings]
+      flash.keep
+      redirect_to movies_path(sort_by: session[:sort_by], ratings: session[:ratings]) and return
+    end    
+    session[:ratings] = params[:ratings] if params[:ratings]
     @selected_ratings = (!session[:ratings].nil? ? session[:ratings].keys : @all_ratings)
-    session[:sort_by] = params[:sort_by] if !params[:sort_by].nil?
+    session[:sort_by] = params[:sort_by] if params[:sort_by]
     @movies = Movie.order(session[:sort_by]).where(:rating => @selected_ratings)
   end
 
