@@ -1,5 +1,4 @@
 class MoviesController < ApplicationController
-  @check = true
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
@@ -12,21 +11,18 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.uniq.pluck(:rating) 
-    if params[:sort_by] and params[:sort_by] != session[:sort_by]
-      session[:sort_by] = params[:sort_by]
-      @check = true
-    end
-    if params[:ratings]
-      session[:ratings] = params[:ratings]
-      @check = true
-    end
-    if !params[:ratings] or !params[:sort_by] and @check
-      @check = false
+    session[:sort_by] = params[:sort_by] || :none
+    session[:ratings] = params[:ratings] || session[:ratings]
+    if !params[:ratings] or !params[:sort_by]
       flash.keep
       redirect_to movies_path(:sort_by => session[:sort_by], :ratings => session[:ratings]) and return
     end
     @selected_ratings = (session[:ratings] ? session[:ratings].keys : @all_ratings)
-    @movies = Movie.order(session[:sort_by]).where(:rating => @selected_ratings)
+    if session[:sort_by] != "none"
+      @movies = Movie.order(session[:sort_by]).where(:rating => @selected_ratings)
+    else
+      @movies = Movie.where(:rating => @selected_ratings)
+    end
   end
 
   def new
