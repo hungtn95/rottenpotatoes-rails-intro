@@ -12,12 +12,13 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.uniq.pluck(:rating) 
-    if params[:sort_by]
+    if params[:sort_by] and params[:sort_by] != session[:sort_by]
       session[:sort_by] = params[:sort_by]
       @check = true
     end
-    if params[:ratings]
+    if params[:ratings] and params[:ratings] != session[:ratings]
       session[:ratings] = params[:ratings]
+      @check = true
     end
     if !params[:ratings] or !params[:sort_by] and @check
       @check = false
