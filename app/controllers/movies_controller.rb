@@ -14,7 +14,7 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.uniq.pluck(:rating) 
     session[:sort_by] = params[:sort_by] || session[:sort_by]
     session[:ratings] = params[:ratings] || session[:ratings]
-    if (!params[:ratings] and params[:sort_by]) or (params[:ratings] and !params[:sort_by])
+    if (params[:ratings] and !params[:sort_by])
       flash.keep
       redirect_to movies_path(:sort_by => session[:sort_by], :ratings => session[:ratings]) and return
     end
