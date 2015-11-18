@@ -16,7 +16,7 @@ class MoviesController < ApplicationController
       session[:sort_by] = params[:sort_by]
       @check = true
     end
-    if params[:ratings] and params[:ratings] != session[:ratings]
+    if params[:ratings]
       session[:ratings] = params[:ratings]
       @check = true
     end
